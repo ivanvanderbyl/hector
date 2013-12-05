@@ -1,38 +1,38 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "encoding/json"
-    "hector"
-    "strconv"
+	"encoding/json"
+	"fmt"
+	"github.com/xlvector/hector"
+	"net/http"
+	"strconv"
 )
 
 type Context struct {
-    feature_iv map[int64]float64
+	feature_iv map[int64]float64
 }
 
 type ContextHandler struct {
-    c Context
-    f ContextFunc
+	c Context
+	f ContextFunc
 }
 
 type ContextFunc func(c *Context, w http.ResponseWriter, r *http.Request)
 
 func (h ContextHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    h.f(&(h.c), w, r)
+	h.f(&(h.c), w, r)
 }
 
 type Response map[string]interface{}
 
 func (r Response) String() (s string) {
-        b, err := json.Marshal(r)
-        if err != nil {
-            s = ""
-            return
-        }
-        s = string(b)
-        return
+	b, err := json.Marshal(r)
+	if err != nil {
+		s = ""
+		return
+	}
+	s = string(b)
+	return
 }
 
 func ToStringMap(m map[int64]float64) map[string]float64 {
@@ -45,7 +45,7 @@ func ToStringMap(m map[int64]float64) map[string]float64 {
 
 func FeatureHandler(c *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-    fmt.Fprint(w, Response{"success": true, "information_value": ToStringMap(c.feature_iv)})
+	fmt.Fprint(w, Response{"success": true, "information_value": ToStringMap(c.feature_iv)})
 }
 
 func main() {
@@ -56,6 +56,6 @@ func main() {
 	context := Context{feature_iv: hector.InformationValue(dataset)}
 	fmt.Println(context)
 	handler := ContextHandler{c: context, f: FeatureHandler}
-    http.Handle("/", handler)
-    http.ListenAndServe(":8080", nil)
+	http.Handle("/", handler)
+	http.ListenAndServe(":8080", nil)
 }

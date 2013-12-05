@@ -1,14 +1,14 @@
 package main
 
 import(
-	"hector"
-	"strings"
+	"github.com/xlvector/hector"
 	"os"
+	"strings"
 )
 
-func main(){
+func main() {
 	train, _, _, _, params := hector.PrepareParams()
-	
+
 	feature_combination := hector.CategoryFeatureCombination{}
 	feature_combination.Init(params)
 
